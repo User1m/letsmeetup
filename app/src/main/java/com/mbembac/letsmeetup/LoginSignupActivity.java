@@ -2,8 +2,12 @@ package com.mbembac.letsmeetup;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,6 +47,14 @@ public class LoginSignupActivity extends Activity {
         Typeface customFont = Typeface.createFromAsset(getAssets(), "Chi-TownNF.ttf");
         TextView b = (TextView) findViewById(R.id.login_main_title);
         b.setTypeface(customFont);
+
+        //determine if gps is enabled
+        final LocationManager man = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        //determine if gps is enabled
+        if (!man.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            gpsEnabledNotification();
+        }
 
         // Locate EditTexts in main.xml
         username = (EditText) findViewById(R.id.username);
@@ -100,19 +112,41 @@ public class LoginSignupActivity extends Activity {
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(),
                                             "You are now logged on!",
-                                            Toast.LENGTH_LONG).show();
+                                            Toast.LENGTH_SHORT).show();
                                     finish();
                                 } else {
                                     Toast.makeText(
                                             getApplicationContext(),
                                             "Invalid login.",
-                                            Toast.LENGTH_LONG).show();
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             }
         });
 
+    }
+
+    public void gpsEnabledNotification(){
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Let's Meetup operates best when GPS to be enabled, please enable GPS")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

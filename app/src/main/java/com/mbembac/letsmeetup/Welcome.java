@@ -1,16 +1,20 @@
 package com.mbembac.letsmeetup;
 
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.parse.ParseUser;
 
 
@@ -24,6 +28,13 @@ public class Welcome extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.welcome, container, false);
+
+        LocationManager man =
+                (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        if(!man.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(getActivity(),"Please Enable GPS!", Toast.LENGTH_LONG).show();
+        }
 
         Button map = (Button) v.findViewById(R.id.map_button);
         map.setOnClickListener(new OnClickListener() {
@@ -47,11 +58,11 @@ public class Welcome extends Fragment {
 
         // Convert currentUser into String
         //String struser = currentUser.getUsername();
-        String x = currentUser.get("first_name").toString();
+        String username = currentUser.get("first_name").toString();
 
-        String firstLetter = x.substring(0, 1).toUpperCase();
-        String restLetters = x.substring(1).toLowerCase();
-        x = firstLetter + restLetters;
+        String firstLetter = username.substring(0, 1).toUpperCase();
+        String restLetters = username.substring(1).toLowerCase();
+        username = firstLetter + restLetters;
 
         // Locate TextView in welcome.xml
         TextView txtuser = (TextView) v.findViewById(R.id.txtuser);
@@ -60,7 +71,7 @@ public class Welcome extends Fragment {
         // Set the currentUser String into TextView
         txtuser.setTextColor(Color.DKGRAY);
         txtuser.isOpaque();
-        txtuser.setText("Welcome " + x + "!");
+        txtuser.setText("Welcome " + username + "!");
 
 
 //        // Find Friends Button Click Listener

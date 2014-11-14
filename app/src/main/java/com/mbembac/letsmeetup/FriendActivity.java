@@ -1,41 +1,40 @@
 package com.mbembac.letsmeetup;
 
-import android.support.v4.app.Fragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-
-import java.util.List;
-import java.util.ArrayList;
-
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FriendActivity extends Fragment {
 
     Button addfriend;
     Button findfriend;
-   // Button goback;
+    // Button goback;
 
     String finduser;
     EditText findusertxt;
-
+    String clickedUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,10 +52,13 @@ public class FriendActivity extends Fragment {
         findfriend = (Button) v.findViewById(R.id.findfriend_button);
         //goback = (Button) v.findViewById(R.id.go_back_friends);
 
+
+
         findusertxt = (EditText) v.findViewById(R.id.find_user_box);
 
         final ArrayList<String> list = new ArrayList<String>();
         final ListView getlist = (ListView) v.findViewById(R.id.friendresults);
+        ParseUser selectedUser;
         getlist.setBackgroundColor(Color.argb(12, 24, 34, 23));
         getlist.setCacheColorHint(Color.DKGRAY);
 
@@ -107,7 +109,9 @@ public class FriendActivity extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
+                view.setSelected(true);
                 String x = parent.getItemAtPosition(position).toString();
+                clickedUser = x;
                 //send friend request to other user
             }
         });
@@ -117,7 +121,41 @@ public class FriendActivity extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                showSimplePopUp();
+                ParseUser newFriend;
+                final ParseRelation<ParseUser> relationCurrentRequesting = ParseUser.getCurrentUser().getRelation("RequestedFriends");
+
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> objects, ParseException e) {
+
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("username", clickedUser);
+                        query.findInBackground(new FindCallback<ParseUser>() {
+                            public void done(List<ParseUser> objects, ParseException e) {
+                                if (e == null) {
+                                    if(objects.size() == 1) {
+                                        Log.d("found", "Found User");
+                                        ParseUser other = objects.get(0);
+                                        Log.d("User:", other.getUsername());
+                                        ParseRelation<ParseUser> relationOtherRequested = other.getRelation("RequestingFriends");
+                                        relationOtherRequested.add(ParseUser.getCurrentUser());
+                                        relationCurrentRequesting.add(other);
+                                        other.saveInBackground();
+                                        ParseUser.getCurrentUser().saveInBackground();
+                                    }
+                                } else {
+                                    // Something went wrong.
+                                }
+                            }
+                        });
+
+
+
+                    }});
+
+
+
             }
         });
 
@@ -135,7 +173,7 @@ public class FriendActivity extends Fragment {
 //            }
 //        });
 
-    return v;
+        return v;
     }
 
 //    @Override
@@ -192,4 +230,3 @@ public class FriendActivity extends Fragment {
     }
 
 }
-

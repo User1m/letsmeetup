@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 
+
         // Determine whether the current user is an anonymous user
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
             // If user is anonymous, send the user to LoginSignupActivity.class
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
                     LoginSignupActivity.class);
             startActivity(intent);
             finish();
+
         } else {
             // If current user is NOT anonymous user
             // Get current user data from Parse.com
@@ -32,14 +34,17 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, FragmentMainPage.class);
                 startActivity(intent);
                 finish();
+
             } else {
                 // Send user to LoginSignupActivity.class
                 Intent intent = new Intent(MainActivity.this,
                         LoginSignupActivity.class);
                 startActivity(intent);
                 finish();
+
             }
         }
-
     }
+
+
 }

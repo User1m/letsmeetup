@@ -1,7 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#B7FFF0"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:weightSum="1">
+
+
+        <TableLayout
+            android:id="@+id/tablelayout"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:paddingRight="2dip" >
+
+            <TableRow>
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Name: " />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Program: " />
+
+                <EditText
+                    android:id="@+id/et_name"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Start Date:" />
+
+                <EditText
+                    android:id="@+id/et_url"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Current Belt:" />
+
+                <EditText
+                    android:id="@+id/et_url2"
+                    android:layout_weight="1" />
+            </TableRow>
+
+        </TableLayout>
+
 
 </LinearLayout>

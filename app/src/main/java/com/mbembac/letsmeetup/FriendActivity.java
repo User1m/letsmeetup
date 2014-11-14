@@ -39,7 +39,10 @@ public class FriendActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.activity_find_friends, container, false);
+
+
 
 //        ActionBar actionBar = getActionBar();
 //        actionBar.setDisplayHomeAsUpEnabled(true);
@@ -123,6 +126,7 @@ public class FriendActivity extends Fragment {
             public void onClick(View arg0) {
                 ParseUser newFriend;
                 final ParseRelation<ParseUser> relationCurrentRequesting = ParseUser.getCurrentUser().getRelation("RequestedFriends");
+                final ParseRelation<ParseUser> anotherRelationCurrentRequesting = ParseUser.getCurrentUser().getRelation("friends");
 
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
                 query.findInBackground(new FindCallback<ParseUser>() {
@@ -141,6 +145,9 @@ public class FriendActivity extends Fragment {
                                         ParseRelation<ParseUser> relationOtherRequested = other.getRelation("RequestingFriends");
                                         relationOtherRequested.add(ParseUser.getCurrentUser());
                                         relationCurrentRequesting.add(other);
+
+                                        anotherRelationCurrentRequesting.add(other);
+
                                         other.saveInBackground();
                                         ParseUser.getCurrentUser().saveInBackground();
                                     }

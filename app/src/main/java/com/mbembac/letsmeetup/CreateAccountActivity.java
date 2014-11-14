@@ -3,8 +3,6 @@ package com.mbembac.letsmeetup;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,12 +47,6 @@ public class CreateAccountActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 
-        //get Location
-        LocationManager man = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Location location = man.getLastKnownLocation(man.GPS_PROVIDER);
-
-        geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-
         // Get the view from main.xml
         setContentView(R.layout.activity_create_account);
 
@@ -93,7 +85,7 @@ public class CreateAccountActivity extends Activity {
                     ParseUser user = new ParseUser();
                     user.put("first_name", first_nametxt);
                     user.put("last_name", last_nametxt);
-                    user.put("location", geoPoint);
+//                    user.put("location", geoPoint);
                     user.setEmail(emailtxt);
                     user.setUsername(usernametxt);
                     user.setPassword(passwordtxt);

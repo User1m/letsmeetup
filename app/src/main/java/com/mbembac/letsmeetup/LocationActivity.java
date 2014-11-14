@@ -16,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+import com.parse.ParseGeoPoint;
 
 /**
  * Created by ClaudiusThaBeast on 11/14/14.
@@ -79,7 +80,7 @@ public class LocationActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        String msg = "Update location: "+ Double.toHexString(location.getLatitude()) +", "+Double.toString(location.getLongitude());
+        String msg = "Update location: " + Double.toHexString(location.getLatitude()) + ", " + Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
@@ -162,6 +163,10 @@ public class LocationActivity extends FragmentActivity implements
 
     }
 
+    private ParseGeoPoint geoPointFromLocation(Location loc) {
+        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,7 +182,11 @@ public class LocationActivity extends FragmentActivity implements
         //create new location client
         locationClient = new LocationClient(this, this, this);
 
-        Intent intent = new Intent();
+        Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
+
+        Intent intent = new Intent(LocationActivity.this, FriendMapActivty.class);
+        intent.putExtra("Location", (java.io.Serializable) geoPointFromLocation(myLoc));
+        startActivity(intent);
     }
 
     @Override

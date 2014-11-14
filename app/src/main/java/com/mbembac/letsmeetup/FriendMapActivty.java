@@ -1,14 +1,26 @@
 package com.mbembac.letsmeetup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendMapActivty extends Activity {
@@ -28,7 +40,46 @@ public class FriendMapActivty extends Activity {
 //        fragmentTransaction.add(R.id.gmap, mMapFragment);
 //        fragmentTransaction.commit();
 
+
+        Intent intent = getIntent();
+        TextView name = (TextView) findViewById(R.id.friend_map_name);
+        name.setText(intent.getStringExtra("ID"));
+
+        final String username = intent.getStringExtra("ID");
+
+        TextView distance = (TextView) findViewById(R.id.friend_map_miles);
+        distance.setText(intent.getStringExtra("Distance") + " Feet Away");
+
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+        final List<ParseUser> userList = new ArrayList<ParseUser>();
+
+        final ParseGeoPoint latLon;
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+
+                if (e == null) {
+                    if (username != null) {
+                        for (ParseUser user : parseUsers) {
+                            if (user.getUsername().contains(username)) {
+                                userList.add(user);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        double loc_lat = 39.9973749;
+        double loc_long = -83.0092424;
+
         setUpMapIfNeeded();
+
+        MarkerOptions marker = new MarkerOptions().position(new LatLng(loc_lat, loc_long)).title(username);
+        gMap.addMarker(marker);
 
     }
 
@@ -61,7 +112,7 @@ public class FriendMapActivty extends Activity {
 
             if (gMap != null) {
                 setupMap();
-            }else{
+            } else {
                 Toast.makeText(this, "Google Maps not available",
                         Toast.LENGTH_LONG).show();
             }

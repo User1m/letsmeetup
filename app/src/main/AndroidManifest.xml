@@ -32,6 +32,7 @@
         <activity android:name=".EditAccountActivity" />
         <activity android:name=".CreateAccountActivity" />
         <activity android:name=".LostPasswordActivity" />
+        <activity android:name=".LocationActivity"/>
 
         <!--googlemaps-->
         <meta-data

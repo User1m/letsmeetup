@@ -17,6 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 
 /**
  * Created by ClaudiusThaBeast on 11/14/14.
@@ -80,8 +81,10 @@ public class LocationActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        currentLocation = location;
         String msg = "Update location: " + Double.toHexString(location.getLatitude()) + ", " + Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        lastLocation = location;
     }
 
     @Override
@@ -139,6 +142,17 @@ public class LocationActivity extends FragmentActivity implements
     public void onConnected(Bundle bundle) {
         Toast.makeText(this, "Connnected", Toast.LENGTH_SHORT).show();
 
+        currentLocation = getLocation();
+        startPeriodicUpdates();
+
+    }
+
+    private void startPeriodicUpdates() {
+        locationClient.requestLocationUpdates(locationRequest, (com.google.android.gms.location.LocationListener) this);
+    }
+
+    private void stopPeriodicUpdates() {
+        locationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
     }
 
     @Override
@@ -184,8 +198,24 @@ public class LocationActivity extends FragmentActivity implements
 
         Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
 
+//        if(myLoc == null){
+//            double loc_lat = 39.9973749;
+//            double loc_long = -83.0092424;
+//            LatLng point = new LatLng(loc_lat, loc_long);
+//
+//            myLoc = new Location()
+//
+//        }
+
+        Log.d("MYLOC", myLoc.toString());
+
+        ParseUser user = ParseUser.getCurrentUser();
+        user.put("location", geoPointFromLocation(myLoc));
+        user.saveInBackground();
+
         Intent intent = new Intent(LocationActivity.this, FriendMapActivty.class);
         intent.putExtra("Location", (java.io.Serializable) geoPointFromLocation(myLoc));
+
         startActivity(intent);
     }
 
@@ -204,7 +234,6 @@ public class LocationActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
 
     }
 

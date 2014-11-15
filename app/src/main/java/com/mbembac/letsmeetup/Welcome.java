@@ -115,6 +115,7 @@ public class Welcome extends Fragment {
                 view.setSelected(true);
                 String user_id = parent.getItemAtPosition(position).toString();
                 Intent intent = new Intent(getActivity(), FriendMapActivty.class);
+//                Intent intent = new Intent(getActivity(), LocationActivity.class);
                 intent.putExtra("ID", user_id);
                 intent.putExtra("Distance", "30");
                 startActivity(intent);

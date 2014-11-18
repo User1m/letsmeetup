@@ -96,12 +96,6 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
             android:name=".LostPasswordActivity" />
-        <activity
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"
-            android:name=".LocationActivity">
-
-        </activity>
 
         <!--googlemaps-->
         <meta-data

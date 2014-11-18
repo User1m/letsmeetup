@@ -3,7 +3,6 @@ package com.mbembac.letsmeetup;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,13 +44,13 @@ public class MeetupRequest extends Fragment {
             public void onClick(View v) {
 
                 final ParseQuery<Meetups> query = Meetups.getQuery();
-                query.whereNotEqualTo("user_to", ParseUser.getCurrentUser());
+                query.whereEqualTo("user_to", ParseUser.getCurrentUser());
                 query.findInBackground(new FindCallback<Meetups>() {
 
                     @Override
                     public void done(List<Meetups> meets, ParseException e) {
                         if (e == null) {
-                            Log.d("HERE", Integer.toString(meets.size()));
+//                            Log.d("HERE", Integer.toString(meets.size()));
                             for (Meetups meet : meets) {
                                 String message = meet.getMessage();
                                 if (!list.contains(message)) {

@@ -43,17 +43,8 @@ public class FriendActivity extends Fragment {
 
         View v = inflater.inflate(R.layout.activity_find_friends, container, false);
 
-
-//        ActionBar actionBar = getActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-
-//        setContentView(R.layout.activity_find_friends);
-
         addfriend = (Button) v.findViewById(R.id.addfriend_button);
         findfriend = (Button) v.findViewById(R.id.findfriend_button);
-        //goback = (Button) v.findViewById(R.id.go_back_friends);
-
-
         findusertxt = (EditText) v.findViewById(R.id.find_user_box);
 
         final ArrayList<String> list = new ArrayList<String>();

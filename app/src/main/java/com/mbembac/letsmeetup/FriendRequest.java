@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.mbembac.letsmeetup.Classes.Friends;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendRequest extends Fragment {
-
 
     Button acceptFriend;
     Button rejectFriend;
@@ -43,14 +43,36 @@ public class FriendRequest extends Fragment {
         refresh = (Button) v.findViewById(R.id.refresh_button);
 
         final ArrayList<String> list = new ArrayList<String>();
-        final ListView getlist = (ListView) v.findViewById(R.id.friendresults);
+        final ListView getlist = (ListView) v.findViewById(R.id.friend_requests_results);
         getlist.setBackgroundColor(Color.argb(12, 24, 34, 23));
         getlist.setCacheColorHint(Color.DKGRAY);
 
         refresh.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                refresh(getlist, list);
+                Log.d("HERE", "Getting requests");
+                //Assume getting ready to fetch new requests
+                final ParseQuery<Friends> query = Friends.getQuery();
+                query.whereEqualTo("userObjectId", ParseUser.getCurrentUser());
+                query.whereEqualTo("accepted", false);
+                query.findInBackground(new FindCallback<Friends>() {
+                    @Override
+                    public void done(List<Friends> requests, ParseException e) {
+                        if (e == null) {
+                            for (Friends request : requests) {
+                                ParseUser currentFriendUser = (ParseUser) request.getFriend();
+                                Log.d("HAVE FRIEND", currentFriendUser.getUsername());
+
+                                if (!list.contains(currentFriendUser.getUsername())){
+                                    list.add(currentFriendUser.getUsername());
+                                }
+                            }
+                            ArrayAdapter<String> arrayAdapter =
+                                    new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, list);
+                            getlist.setAdapter(arrayAdapter);
+                        }
+                    }
+                });
             }
         });
 
@@ -146,33 +168,5 @@ public class FriendRequest extends Fragment {
 
         return v;
 
-    }
-
-    private void refresh(final ListView getlist, final ArrayList<String> list) {
-        //Assume getting ready to fetch new requests
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Friends");
-        query.whereEqualTo("userObjectId", ParseUser.getCurrentUser());
-        query.whereEqualTo("accepted", false);
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null) {
-                    for (ParseObject aObject : objects) {
-                        ParseObject currentFriendUser = aObject.getParseObject("friendObjectId");
-
-                        //String username = currentFriendUser.getString("username");
-                        Log.d("USERNAME", currentFriendUser.getString("username"));
-
-                        if (!list.contains(currentFriendUser.getString("username"))) {
-                            list.add(currentFriendUser.getString("username"));
-                        }
-                    }
-                    ArrayAdapter<String> arrayAdapter =
-                            new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, list);
-                    getlist.setAdapter(arrayAdapter);
-                }
-            }
-        });
     }
 }

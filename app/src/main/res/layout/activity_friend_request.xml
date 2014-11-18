@@ -45,9 +45,9 @@
             android:layout_gravity="center_horizontal" />
 
         <ListView
-            android:id="@+id/friendresults"
+            android:id="@+id/friend_requests_results"
             android:layout_width="match_parent"
-            android:layout_height="86dp"
+            android:layout_height="170dp"
             android:drawSelectorOnTop="false"
             android:layout_gravity="center_horizontal">
         </ListView>

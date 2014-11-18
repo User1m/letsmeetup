@@ -3,7 +3,6 @@ package com.mbembac.letsmeetup;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -77,12 +76,13 @@ public class FriendMapActivty extends Activity {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
+                    int c = 0;
                     for (ParseUser user : parseUsers) {
                         if (user.getUsername().equals(username)) {
-                            user_list.clear();
-                            user_list.add(parseUsers.get(0));
-                            Log.d("USERLIST", "ADDING USER");
+//                            user_list.clear();
+                            user_list.add(parseUsers.get(c));
                         }
+                        c++;
                     }
                 } else {
                     e.printStackTrace();
@@ -96,12 +96,13 @@ public class FriendMapActivty extends Activity {
 
                 String where = whereText.getText().toString();
                 String when = whenText.getText().toString();
-
+                ParseUser friend = user_list.get(0);
+//                Log.d("SEND INVITE TO", friend.getUsername());
                 String msg = ParseUser.getCurrentUser().getUsername() + " wants to meet @ " + when + " at " + where;
 
                 Meetups meet = new Meetups();
                 meet.setUserFrom(ParseUser.getCurrentUser());
-                meet.setUserTo(user_list.get(0));
+                meet.setUserTo(friend);
                 meet.setMessage(msg);
                 meet.saveInBackground();
 

@@ -58,7 +58,8 @@ public class FriendActivity extends Fragment {
 
         final ArrayList<String> list = new ArrayList<String>();
         final ListView getlist = (ListView) v.findViewById(R.id.friendresults);
-        ParseUser selectedUser;
+
+//        ParseUser selectedUser;
         getlist.setBackgroundColor(Color.argb(12, 24, 34, 23));
         getlist.setCacheColorHint(Color.DKGRAY);
 
@@ -158,52 +159,9 @@ public class FriendActivity extends Fragment {
             }
         });
 
-
-//        // Go Back to Home Page Click Listener
-//        goback.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View arg0) {
-//
-//                Intent intent = new Intent(getActivity(),
-//                        Welcome.class);
-//                startActivity(intent);
-//                //finish();
-//
-//            }
-//        });
-
         return v;
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//
-//        int titleId = getResources().getIdentifier("action_bar_title", "id",
-//                "android");
-//
-//        TextView yourTextView = (TextView) findViewById(titleId);
-//        Typeface customFont = Typeface.createFromAsset(getAssets(), "Chi-TownNF.ttf");
-//        yourTextView.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
-//        yourTextView.setTypeface(customFont);
-//
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main_activity_actions, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                // app icon in action bar clicked; goto parent activity.
-//                this.finish();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
 
     private void showSimplePopUp() {
 

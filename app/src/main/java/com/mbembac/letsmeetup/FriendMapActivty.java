@@ -3,9 +3,13 @@ package com.mbembac.letsmeetup;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,9 +17,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mbembac.letsmeetup.Classes.Meetups;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -42,45 +46,73 @@ public class FriendMapActivty extends Activity {
 
 
         Intent intent = getIntent();
-        TextView name = (TextView) findViewById(R.id.friend_map_name);
-        name.setText(intent.getStringExtra("ID"));
+        final String username = intent.getStringExtra("username");
 
-        final String username = intent.getStringExtra("ID");
+        TextView name = (TextView) findViewById(R.id.friend_map_name);
+        name.setText(username);
 
         TextView distance = (TextView) findViewById(R.id.friend_map_miles);
-        distance.setText(intent.getStringExtra("Distance") + " Feet Away");
+        distance.setText("Within 100 Miles");
 
-
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-
-        final List<ParseUser> userList = new ArrayList<ParseUser>();
-
-        final ParseGeoPoint latLon;
-
-        query.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-
-                if (e == null) {
-                    if (username != null) {
-                        for (ParseUser user : parseUsers) {
-                            if (user.getUsername().contains(username)) {
-                                userList.add(user);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        double loc_lat = 39.9973749;
-        double loc_long = -83.0092424;
+        double loc_lat = intent.getDoubleExtra("lat", 0);
+        double loc_long = intent.getDoubleExtra("lon", 0);
 
         setUpMapIfNeeded();
 
         MarkerOptions marker = new MarkerOptions().position(new LatLng(loc_lat, loc_long)).title(username);
         gMap.addMarker(marker);
 
+
+        final List<ParseUser> user_list = new ArrayList<ParseUser>();
+
+        Button send_request = (Button) findViewById(R.id.send_request_meetup);
+
+        final EditText whereText = (EditText) findViewById(R.id.where);
+        final EditText whenText = (EditText) findViewById(R.id.when);
+
+        //assume user means to send meetup
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.findInBackground(new FindCallback<ParseUser>() {
+
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if (e == null) {
+                    for (ParseUser user : parseUsers) {
+                        if (user.getUsername().equals(username)) {
+                            user_list.clear();
+                            user_list.add(parseUsers.get(0));
+                            Log.d("USERLIST", "ADDING USER");
+                        }
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        send_request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String where = whereText.getText().toString();
+                String when = whenText.getText().toString();
+
+                String msg = ParseUser.getCurrentUser().getUsername() + " wants to meet @ " + when + " at " + where;
+
+                Meetups meet = new Meetups();
+                meet.setUserFrom(ParseUser.getCurrentUser());
+                meet.setUserTo(user_list.get(0));
+                meet.setMessage(msg);
+                meet.saveInBackground();
+
+                Intent intent = new Intent(v.getContext(), Welcome.class);
+                startActivity(intent);
+                Toast.makeText(getApplicationContext(),
+                        "You're message has been sent!!",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
 

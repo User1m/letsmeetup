@@ -115,6 +115,7 @@ public class Welcome extends FragmentActivity implements
         //create new location client
         locationClient = new LocationClient(this, this, this);
 
+        myLoc = (currentLocation == null) ? lastLocation : currentLocation;
 
         Button friend_opt = (Button) findViewById(R.id.friend_option_button);
         friend_opt.setOnClickListener(new View.OnClickListener() {
@@ -160,13 +161,17 @@ public class Welcome extends FragmentActivity implements
         txtuser.isOpaque();
         txtuser.setText("Welcome " + username + "!");
 
-
         final ParseRelation<ParseUser> friend_relation = ParseUser.getCurrentUser().getRelation("friends");
-//        final ArrayList<ParseUser> list = new ArrayList<ParseUser>();
+        final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
         final ArrayList<String> list = new ArrayList<String>();
-
         final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
+
+        ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
+
         ParseQuery<ParseUser> query = friend_relation.getQuery();
+        query.whereNear("location", mylocation);
+        Log.d(ParseApplication.APPTAG, " Querying my location");
+//        query.setLimit(10);
 
         query.findInBackground(new FindCallback<ParseUser>() {
                                    @Override
@@ -175,6 +180,7 @@ public class Welcome extends FragmentActivity implements
 
                                            for (ParseUser user : parseUsers) {
                                                list.add(user.getUsername());
+                                               user_list.add(user);
                                            }
                                        }
                                        ArrayAdapter<String> arrayAdapter =
@@ -190,14 +196,38 @@ public class Welcome extends FragmentActivity implements
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 view.setSelected(true);
-                String user_id = parent.getItemAtPosition(position).toString();
+                final Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
+                String user_name = parent.getItemAtPosition(position).toString();
 
-                Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
-                intent.putExtra("ID", user_id);
-                intent.putExtra("Distance", "30");
+                for (ParseUser user : user_list) {
+                    if (user_name == user.get("username")) {
+
+                        double lon = user.getParseGeoPoint("location").getLongitude();
+                        double lat = user.getParseGeoPoint("location").getLatitude();
+
+                        intent.putExtra("username", user.getUsername());
+                        intent.putExtra("lat", lat);
+                        intent.putExtra("lon", lon);
+
+                        Log.d("SENT", "Sending user over");
+                    }
+                }
                 startActivity(intent);
             }
         });
+
+        //register notifications
+//        ParsePush.subscribeInBackground("", new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if (e == null) {
+//                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+//                } else {
+//                    Log.e("com.parse.push", "failed to subscribe for push", e);
+//                }
+//            }
+//        });
+
 
         // Logout Button Click Listener
         logout.setOnClickListener(new
@@ -207,12 +237,14 @@ public class Welcome extends FragmentActivity implements
                                               public void onClick(View arg0) {
                                                   // Logout current user
                                                   ParseUser.logOut();
-                                                  Welcome.this.finish();
+//                                                  Welcome.this.finish();
+                                                  Intent intent = new Intent(Welcome.this, LoginSignupActivity.class);
+                                                  startActivity(intent);
+                                                  finish();
                                               }
                                           }
         );
 
-        myLoc = (currentLocation == null) ? lastLocation : currentLocation;
         if (myLoc == null) {
             Toast.makeText(Welcome.this,
                     "Please try again after location is determined.", Toast.LENGTH_LONG).show();
@@ -273,7 +305,7 @@ public class Welcome extends FragmentActivity implements
                 .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
             // If the location hasn't changed by more than 10 meters, ignore it.
             return;
-        }else {
+        } else {
             ParseUser user = ParseUser.getCurrentUser();
             user.put("location", geoPointFromLocation(currentLocation));
             user.saveInBackground();

@@ -17,6 +17,8 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
                 return new FriendActivity();
             case 1:
                 return new FriendRequest();
+            case 2:
+                return new MeetupRequest();
         }
         return null;
     }
@@ -24,6 +26,6 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return 2; //No of Tabs
+        return 3; //No of Tabs
     }
 }

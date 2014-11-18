@@ -67,9 +67,9 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="time"
+                android:singleLine="true"
                 android:ems="10"
-                android:id="@+id/when_time"/>
+                android:id="@+id/when" />
 
         </LinearLayout>
 
@@ -90,9 +90,10 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:ems="10"
-                android:id="@+id/when_date" />
+                android:singleLine="true"
+                android:id="@+id/where"
+                android:ems="10"/>
+
         </LinearLayout>
 
         <LinearLayout

@@ -26,7 +26,8 @@ public class FragmentMainPage extends FragmentActivity {
                         actionBar = getActionBar();
                         actionBar.setSelectedNavigationItem(position);
                     }
-                });
+                }
+        );
         Tab.setAdapter(TabAdapter);
         actionBar = getActionBar();
         int titleId = getResources().getIdentifier("action_bar_title", "id",
@@ -57,7 +58,8 @@ public class FragmentMainPage extends FragmentActivity {
         };
         //Add New Tab
 //        actionBar.addTab(actionBar.newTab().setText("Home").setTabListener(tabListener));
-        actionBar.addTab(actionBar.newTab().setText("Friends").setTabListener(tabListener));
+        actionBar.addTab(actionBar.newTab().setText("Add Friends").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Friend Requests").setTabListener(tabListener));
+        actionBar.addTab(actionBar.newTab().setText("View Meetups").setTabListener(tabListener));
     }
 }

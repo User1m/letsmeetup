@@ -9,8 +9,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.mbembac.letsmeetup.Classes.Friends;
+import com.mbembac.letsmeetup.Classes.Meetups;
+import com.mbembac.letsmeetup.Classes.Users;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -35,9 +38,13 @@ public class ParseApplication extends Application {
         super.onCreate();
 
         ParseObject.registerSubclass(Friends.class);
+        ParseObject.registerSubclass(Users.class);
+        ParseObject.registerSubclass(Meetups.class);
 
         // Add your initialization code here
         Parse.initialize(this, "HAX3UEY7MZ1nfP7UhrkwvWH7FFutZ1vdf0fKzmP7", "sqT98AlebubQTHlwvv5GCpmgk66LiLYOBZBJhMCJ");
+
+        ParseInstallation.getCurrentInstallation().saveInBackground();
 
         preferences = getSharedPreferences("com.mbembac.letsmeetup", Context.MODE_PRIVATE);
 

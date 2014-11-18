@@ -69,6 +69,8 @@
     <string name="findfriend_button">Find Friend</string>
     <string name="addfriend_button">Add Friend</string>
     <string name="findfriend">Find Friends</string>
+    <string name="back_button"><![CDATA[< Back]]></string>
+    <string name="refresh_button">Refresh</string>
 
 
 </resources>

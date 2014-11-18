@@ -8,8 +8,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.mbembac.letsmeetup.Classes.Friends;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class ParseApplication extends Application {
@@ -31,6 +33,8 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        ParseObject.registerSubclass(Friends.class);
 
         // Add your initialization code here
         Parse.initialize(this, "HAX3UEY7MZ1nfP7UhrkwvWH7FFutZ1vdf0fKzmP7", "sqT98AlebubQTHlwvv5GCpmgk66LiLYOBZBJhMCJ");

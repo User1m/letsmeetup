@@ -83,6 +83,21 @@
             android:clickable="true"
             style="@style/main_button"/>
 
+        <Button
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/refresh_button"
+            android:fontFamily="sans-serif-short"
+            android:id="@+id/refresh_button"
+            android:textSize="15sp"
+            android:layout_marginBottom="5dp"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textAllCaps="true"
+            android:clickable="true"
+            style="@style/main_button"/>
+
     </LinearLayout>
 
 </RelativeLayout>

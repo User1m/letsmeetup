@@ -60,11 +60,11 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/map_button"
+        android:id="@+id/friend_option_button"
         style="@style/button_text"
         android:layout_below="@+id/tableLayout4"
         android:layout_centerHorizontal="true"
-        android:text="Load Map" />
+        android:text="Friend Options" />
 
     <!--<Button-->
         <!--android:id="@+id/friendme_button"-->
@@ -76,7 +76,7 @@
     <Button
         android:id="@+id/logout"
         style="@style/button_text"
-        android:layout_below="@+id/map_button"
+        android:layout_below="@+id/friend_option_button"
         android:layout_centerHorizontal="true"
         android:text="@string/LogoutBtn" />
 

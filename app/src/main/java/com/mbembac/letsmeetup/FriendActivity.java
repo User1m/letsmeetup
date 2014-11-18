@@ -17,11 +17,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mbembac.letsmeetup.Classes.Friends;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class FriendActivity extends Fragment {
 
     String finduser;
     EditText findusertxt;
-    String clickedUser;
+    ParseUser clickedUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,18 +44,14 @@ public class FriendActivity extends Fragment {
         View v = inflater.inflate(R.layout.activity_find_friends, container, false);
 
 
-
 //        ActionBar actionBar = getActionBar();
 //        actionBar.setDisplayHomeAsUpEnabled(true);
 
 //        setContentView(R.layout.activity_find_friends);
 
-
-
         addfriend = (Button) v.findViewById(R.id.addfriend_button);
         findfriend = (Button) v.findViewById(R.id.findfriend_button);
         //goback = (Button) v.findViewById(R.id.go_back_friends);
-
 
 
         findusertxt = (EditText) v.findViewById(R.id.find_user_box);
@@ -113,9 +110,23 @@ public class FriendActivity extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 view.setSelected(true);
-                String x = parent.getItemAtPosition(position).toString();
-                clickedUser = x;
-                //send friend request to other user
+                String name = parent.getItemAtPosition(position).toString();
+
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+                query.whereEqualTo("username", name);
+                query.findInBackground(new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> parseUsers, ParseException e) {
+                        if (e == null) {
+                            if (parseUsers.size() == 1) {
+                                clickedUser = parseUsers.get(0);
+                                Log.d("HERE", clickedUser.getUsername());
+                            }
+
+                        }
+                    }
+                });
             }
         });
 
@@ -124,45 +135,26 @@ public class FriendActivity extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                ParseUser newFriend;
-                final ParseRelation<ParseUser> relationCurrentRequesting = ParseUser.getCurrentUser().getRelation("RequestedFriends");
-                final ParseRelation<ParseUser> anotherRelationCurrentRequesting = ParseUser.getCurrentUser().getRelation("friends");
+                Friends newFriendship = new Friends();
+                newFriendship.setUser(ParseUser.getCurrentUser());
+                newFriendship.setFriend(clickedUser);
+                newFriendship.setAccepted();
+                newFriendship.saveInBackground(
+                        new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Log.d("Friendship", " SAVED");
+                                if (e == null)
+//                            completitionCallback.success();
+                                    Log.d("HERE", "Success");
+                                else
+//                            completitionCallback.error(e);
+                                    Log.d("HERE", "Error");
+//                                e.printStackTrace();
 
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                query.findInBackground(new FindCallback<ParseUser>() {
-                    @Override
-                    public void done(List<ParseUser> objects, ParseException e) {
-
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        query.whereEqualTo("username", clickedUser);
-                        query.findInBackground(new FindCallback<ParseUser>() {
-                            public void done(List<ParseUser> objects, ParseException e) {
-                                if (e == null) {
-                                    if(objects.size() == 1) {
-                                        Log.d("found", "Found User");
-                                        ParseUser other = objects.get(0);
-                                        Log.d("User:", other.getUsername());
-                                        ParseRelation<ParseUser> relationOtherRequested = other.getRelation("RequestingFriends");
-                                        relationOtherRequested.add(ParseUser.getCurrentUser());
-                                        relationCurrentRequesting.add(other);
-
-                                        anotherRelationCurrentRequesting.add(other);
-
-                                        other.saveInBackground();
-                                        ParseUser.getCurrentUser().saveInBackground();
-                                    }
-                                } else {
-                                    // Something went wrong.
-                                }
                             }
-                        });
-
-
-
-                    }});
-
-
-
+                        }
+                );
             }
         });
 
@@ -224,13 +216,15 @@ public class FriendActivity extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
                     }
-                });
+                }
+        );
         helpBuilder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Close window
                     }
-                });
+                }
+        );
         // Remember, create doesn't show the dialog
         AlertDialog helpDialog = helpBuilder.create();
         helpDialog.show();

@@ -1,31 +1,11 @@
 package com.mbembac.letsmeetup;
 
-import android.support.v4.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-
-import java.util.List;
-import java.util.ArrayList;
-
-import com.parse.ParseUser;
 
 public class FriendRequest extends Fragment {
 
@@ -33,6 +13,14 @@ public class FriendRequest extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_friend_request, container, false);
+
+        Button refresh = (Button) v.findViewById(R.id.refresh_button);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return v;
 

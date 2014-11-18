@@ -16,7 +16,6 @@ public class MainActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 
-
         // Determine whether the current user is an anonymous user
         if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
             // If user is anonymous, send the user to LoginSignupActivity.class
@@ -31,7 +30,7 @@ public class MainActivity extends Activity {
             ParseUser currentUser = ParseUser.getCurrentUser();
             if (currentUser != null) {
                 // Send logged in users to Welcome.class
-                Intent intent = new Intent(MainActivity.this, FragmentMainPage.class);
+                Intent intent = new Intent(MainActivity.this, Welcome.class);
                 startActivity(intent);
                 finish();
 

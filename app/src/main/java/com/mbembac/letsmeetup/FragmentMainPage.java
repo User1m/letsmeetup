@@ -56,7 +56,7 @@ public class FragmentMainPage extends FragmentActivity {
             }
         };
         //Add New Tab
-        actionBar.addTab(actionBar.newTab().setText("Home").setTabListener(tabListener));
+//        actionBar.addTab(actionBar.newTab().setText("Home").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Friends").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Friend Requests").setTabListener(tabListener));
     }

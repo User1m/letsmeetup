@@ -14,10 +14,8 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return new Welcome();
-            case 1:
                 return new FriendActivity();
-            case 2:
+            case 1:
                 return new FriendRequest();
         }
         return null;
@@ -26,6 +24,6 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return 3; //No of Tabs
+        return 2; //No of Tabs
     }
 }

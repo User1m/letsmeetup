@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -25,7 +24,7 @@ import com.parse.ParseUser;
 public class LocationActivity extends FragmentActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener,
         GooglePlayServicesClient.ConnectionCallbacks,
-        LocationListener {
+        com.google.android.gms.location.LocationListener {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -80,110 +79,9 @@ public class LocationActivity extends FragmentActivity implements
     private LocationClient locationClient;
 
     @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-        String msg = "Update location: " + Double.toHexString(location.getLatitude()) + ", " + Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        lastLocation = location;
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
-    // Define a DialogFragment that displays the error dialog
-    public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
-        // Global field to contain the error dialog
-        private Dialog mDialog;
-
-        // Default constructor. Sets the dialog field to null
-        public ErrorDialogFragment() {
-            super();
-            mDialog = null;
-        }
-
-        // Set the dialog to display
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        // Return a Dialog to the DialogFragment.
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return mDialog;
-        }
-    }
-
-    /*
-  * Get the current location
-  */
-    private Location getLocation() {
-        // If Google Play Services is available
-        if (servicesConnected()) {
-            // Get the current location
-            return locationClient.getLastLocation();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Toast.makeText(this, "Connnected", Toast.LENGTH_SHORT).show();
-
-        currentLocation = getLocation();
-        startPeriodicUpdates();
-
-    }
-
-    private void startPeriodicUpdates() {
-        locationClient.requestLocationUpdates(locationRequest, (com.google.android.gms.location.LocationListener) this);
-    }
-
-    private void stopPeriodicUpdates() {
-        locationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
-    }
-
-    @Override
-    public void onDisconnected() {
-        Toast.makeText(this, "Disconnnected. Please re-connect.", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-//            Toast.makeText(this, connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
-            showErrorDialog(connectionResult.getErrorCode());
-        }
-
-    }
-
-    private ParseGeoPoint geoPointFromLocation(Location loc) {
-        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.location);
 
         //create global location object
         locationRequest = LocationRequest.create();
@@ -197,17 +95,11 @@ public class LocationActivity extends FragmentActivity implements
         locationClient = new LocationClient(this, this, this);
 
         Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
-
-//        if(myLoc == null){
-//            double loc_lat = 39.9973749;
-//            double loc_long = -83.0092424;
-//            LatLng point = new LatLng(loc_lat, loc_long);
-//
-//            myLoc = new Location()
-//
-//        }
-
-        Log.d("MYLOC", myLoc.toString());
+        if (myLoc == null) {
+            Toast.makeText(LocationActivity.this,
+                    "Please try again after your location appears on the map.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         ParseUser user = ParseUser.getCurrentUser();
         user.put("location", geoPointFromLocation(myLoc));
@@ -227,6 +119,10 @@ public class LocationActivity extends FragmentActivity implements
 
     @Override
     protected void onStop() {
+        if (locationClient.isConnected()) {
+            stopPeriodicUpdates();
+        }
+
         locationClient.disconnect();
         super.onStop();
     }
@@ -234,7 +130,34 @@ public class LocationActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+    }
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
 
+        currentLocation = getLocation();
+        startPeriodicUpdates();
+    }
+    @Override
+    public void onDisconnected() {
+        Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void startPeriodicUpdates() {
+        locationClient.requestLocationUpdates(locationRequest, (com.google.android.gms.location.LocationListener) this);
+    }
+
+    private void stopPeriodicUpdates() {
+        locationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+        String msg = "Update location: " + Double.toHexString(location.getLatitude()) + ", " + Double.toString(location.getLongitude());
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        lastLocation = location;
     }
 
     @Override
@@ -313,6 +236,40 @@ public class LocationActivity extends FragmentActivity implements
     }
 
     /*
+  * Get the current location
+  */
+    private Location getLocation() {
+        // If Google Play Services is available
+        if (servicesConnected()) {
+            // Get the current location
+            return locationClient.getLastLocation();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                Log.d(ParseApplication.APPTAG, "An error occurred when connecting to location services.", e);
+                e.printStackTrace();
+            }
+        } else {
+//            Toast.makeText(this, connectionResult.getErrorCode(), Toast.LENGTH_SHORT).show();
+            showErrorDialog(connectionResult.getErrorCode());
+        }
+
+    }
+
+    private ParseGeoPoint geoPointFromLocation(Location loc) {
+        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
+
+    /*
   * Show a dialog returned by Google Play services for the connection error code
   */
     private void showErrorDialog(int errorCode) {
@@ -335,4 +292,26 @@ public class LocationActivity extends FragmentActivity implements
         }
     }
 
+    // Define a DialogFragment that displays the error dialog
+    public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
+        // Global field to contain the error dialog
+        private Dialog mDialog;
+
+        // Default constructor. Sets the dialog field to null
+        public ErrorDialogFragment() {
+            super();
+            mDialog = null;
+        }
+
+        // Set the dialog to display
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        // Return a Dialog to the DialogFragment.
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return mDialog;
+        }
+    }
 }

@@ -6,9 +6,9 @@ package com.mbembac.letsmeetup.Classes;
 public class Meetup {
     java.util.Date dateTime;
     //GPS COORD location
-    Friendship frienship;
+    //Friendship frienship;
 
-    boolean agreedByRequested;
+    //boolean agreedByRequested;
 
 
 

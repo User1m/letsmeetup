@@ -136,14 +136,16 @@ public class FriendActivity extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 Log.d("Friendship", " SAVED");
-                                if (e == null)
-//                            completitionCallback.success();
-                                    Log.d("HERE", "Success");
-                                else
-//                            completitionCallback.error(e);
-                                    Log.d("HERE", "Error");
-//                                e.printStackTrace();
-
+                                if (e == null){
+                                 showSimplePopUp();
+                                }
+                                else {
+                                    if (finduser.equals("")) {
+                                        Toast.makeText(getActivity(),
+                                                "Enter a username to search before adding a friend.",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
                             }
                         }
                 );

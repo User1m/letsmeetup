@@ -22,6 +22,9 @@
                 <TextView
                     android:layout_weight="1"
                     android:text="Name: " />
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_weight="1" />
             </TableRow>
 
             <TableRow>
@@ -30,7 +33,7 @@
                     android:text="Program: " />
 
                 <EditText
-                    android:id="@+id/et_name"
+                    android:id="@+id/program"
                     android:layout_weight="1" />
             </TableRow>
 
@@ -40,7 +43,7 @@
                     android:text="Start Date:" />
 
                 <EditText
-                    android:id="@+id/et_url"
+                    android:id="@+id/start"
                     android:layout_weight="1" />
             </TableRow>
 
@@ -50,7 +53,7 @@
                     android:text="Current Belt:" />
 
                 <EditText
-                    android:id="@+id/et_url2"
+                    android:id="@+id/belt"
                     android:layout_weight="1" />
             </TableRow>
 

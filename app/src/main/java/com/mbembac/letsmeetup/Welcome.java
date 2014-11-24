@@ -97,6 +97,8 @@ public class Welcome extends FragmentActivity implements
     // Stores the current instantiation of the location client in this object
     private LocationClient locationClient;
 
+    static ParseUser currentUser;
+
     static Location myLoc;
 
     @Override
@@ -142,7 +144,9 @@ public class Welcome extends FragmentActivity implements
         Typeface customFont = Typeface.createFromAsset(getResources().getAssets(), "BLACKJAR.ttf");
 
         // Retrieve current user from Parse.com
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseUser.getCurrentUser();
+        currentUser.put("isOnline", true);
+        currentUser.saveInBackground();
 
         // Convert currentUser into String
         //String struser = currentUser.getUsername();
@@ -169,6 +173,7 @@ public class Welcome extends FragmentActivity implements
         ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
 
         ParseQuery<ParseUser> query = friend_relation.getQuery();
+        query.whereEqualTo("isOnline", true);
         query.whereNear("location", mylocation);
         Log.d(ParseApplication.APPTAG, " Querying my location");
 //        query.setLimit(10);
@@ -235,8 +240,10 @@ public class Welcome extends FragmentActivity implements
                                           View.OnClickListener() {
 
                                               public void onClick(View arg0) {
+                                                  currentUser.put("isOnline", false);
+                                                  currentUser.saveInBackground();
                                                   // Logout current user
-                                                  ParseUser.logOut();
+                                                  currentUser.logOut();
 //                                                  Welcome.this.finish();
                                                   Intent intent = new Intent(Welcome.this, LoginSignupActivity.class);
                                                   startActivity(intent);

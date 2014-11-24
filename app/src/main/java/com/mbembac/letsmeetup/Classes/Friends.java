@@ -1,5 +1,6 @@
 package com.mbembac.letsmeetup.Classes;
 
+import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -40,4 +41,10 @@ public class Friends extends ParseObject{
         return ParseQuery.getQuery(Friends.class);
     }
 
+    public void setACL(){
+        ParseACL access = new ParseACL();
+        access.setPublicReadAccess(true);
+        access.setPublicWriteAccess(true);
+        ParseACL.setDefaultACL(access, true);
+    }
 }

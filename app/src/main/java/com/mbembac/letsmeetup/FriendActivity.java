@@ -131,6 +131,7 @@ public class FriendActivity extends Fragment {
                 newFriendship.setUser(ParseUser.getCurrentUser());
                 newFriendship.setFriend(clickedUser);
                 newFriendship.setAccepted();
+                newFriendship.setACL();
                 newFriendship.saveInBackground(
                         new SaveCallback() {
                             @Override

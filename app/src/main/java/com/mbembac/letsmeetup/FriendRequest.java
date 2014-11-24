@@ -46,7 +46,9 @@ public class FriendRequest extends Fragment {
         rejectFriend = (Button) v.findViewById(R.id.reject_request_button);
         refresh = (Button) v.findViewById(R.id.friends_refresh_button);
 
-        final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
+        final ArrayList<ParseUser> user_list_accepted = new ArrayList<ParseUser>();
+        final ArrayList<ParseUser> user_list_unviewed = new ArrayList<ParseUser>();
+
         final ArrayList<String> user_list_names = new ArrayList<String>();
         final ListView getlist = (ListView) v.findViewById(R.id.friend_requests_results);
         getlist.setBackgroundColor(Color.argb(12, 24, 34, 23));
@@ -54,40 +56,80 @@ public class FriendRequest extends Fragment {
 
         refresh.setOnClickListener(new View.OnClickListener() {
 
+
             public void onClick(View arg0) {
                 Log.d("HERE", "Getting requests");
                 //Assume getting ready to fetch new requests
-                final ParseQuery<Friends> query = Friends.getQuery();
-                query.whereEqualTo("user_to", ParseUser.getCurrentUser());
-                query.whereEqualTo("accepted", false);
 
-                query.findInBackground(new FindCallback<Friends>() {
+                List<ParseQuery<Friends>> queries = new ArrayList<ParseQuery<Friends>>();
+
+                final ParseQuery<Friends> query1 = Friends.getQuery();
+                query1.whereEqualTo("user_to", ParseUser.getCurrentUser());
+
+                final ParseQuery<Friends> query2 = Friends.getQuery();
+                query2.whereEqualTo("user_from", ParseUser.getCurrentUser());
+
+                queries.add(query1);
+                queries.add(query2);
+
+                ParseQuery<Friends> superQuery = ParseQuery.or(queries);
+
+//                query.whereEqualTo("user_from", ParseUser.getCurrentUser());
+                superQuery.findInBackground(new FindCallback<Friends>() {
                     @Override
                     public void done(List<Friends> requests, ParseException e) {
                         if (e == null) {
-                            if (requests.size() == 0) {
-                                Toast.makeText(getActivity(), "Sorry No Friend Requests Yet", Toast.LENGTH_LONG).show();
-                            } else {
-                                for (Friends request : requests) {
+
+                            for (Friends request : requests) {
+
+                                if (!request.getUser().equals(ParseUser.getCurrentUser())) {
                                     try {
                                         currentFriend = request.getFriend().fetch();
                                     } catch (ParseException e1) {
                                         e1.printStackTrace();
                                     }
-                                    Log.d("Friend", currentFriend.getUsername());
+                                    Log.d("Friend1", currentFriend.getUsername());
+                                } else {
+                                    try {
+                                        currentFriend = request.getUser().fetch();
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                    Log.d("Friend2", currentFriend.getUsername());
+                                }
+
+                                //make a list of accepted requests
+                                if (request.getAccepted()) {
+                                    user_list_accepted.add(currentFriend);
+                                    request.deleteInBackground();
+
+                                    //make a list of un-responded requests
+                                } else {
                                     user_list_names.add(currentFriend.getUsername());
-                                    user_list.add(currentFriend);
+                                    user_list_unviewed.add(currentFriend);
                                 }
                             }
+
+                            if (user_list_unviewed.size() <= 0) {
+                                Toast.makeText(getActivity(), "Sorry, No Friend Requests Right Now", Toast.LENGTH_LONG).show();
+                            }
+
+                            ArrayAdapter<String> arrayAdapter =
+                                    new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, user_list_names);
+                            getlist.setAdapter(arrayAdapter);
+
+
+                            if (user_list_accepted.size() > 0) {
+                                ParseRelation relation = ParseUser.getCurrentUser().getRelation("friends");
+                                for (ParseUser friendUser : user_list_accepted) {
+                                    relation.add(friendUser);
+                                }
+                                ParseUser.getCurrentUser().saveInBackground();
+                            }
+
                         }
-
-                        ArrayAdapter<String> arrayAdapter =
-                                new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, user_list_names);
-                        getlist.setAdapter(arrayAdapter);
-
                     }
                 });
-
             }
         });
 
@@ -99,9 +141,9 @@ public class FriendRequest extends Fragment {
                 view.setSelected(true);
                 String name = parent.getItemAtPosition(position).toString();
 
-                Log.d("Selected User is", name);
+//                Log.d("Selected User is", name);
 
-                for (ParseUser friend : user_list) {
+                for (ParseUser friend : user_list_unviewed) {
                     if (friend.getUsername().equals(name)) {
                         clickedUser = friend;
                     }
@@ -116,10 +158,6 @@ public class FriendRequest extends Fragment {
 
                 final String friend_name = clickedUser.getUsername();
 
-                ParseRelation friend_relation = clickedUser.getRelation("friends");
-                friend_relation.add(ParseUser.getCurrentUser());
-                clickedUser.saveInBackground();
-
                 ParseRelation user_relation = ParseUser.getCurrentUser().getRelation("friends");
                 user_relation.add(clickedUser);
                 ParseUser.getCurrentUser().saveInBackground();
@@ -131,9 +169,12 @@ public class FriendRequest extends Fragment {
                     @Override
                     public void done(List<ParseObject> requests, ParseException e) {
                         if (e == null) {
-                            Log.d("DELETING", Integer.toString(requests.size())+" requests");
+                            //change accepted to true
+                            Log.d("ACCEPTING", Integer.toString(requests.size()) + " requests");
                             for (ParseObject request : requests) {
-                                request.deleteInBackground();
+                                Log.d("HERE", "accepting");
+                                request.put("accepted", true);
+                                request.saveInBackground();
                             }
                         }
                         Toast.makeText(getActivity(), friend_name + " has been added!", Toast.LENGTH_LONG).show();
@@ -153,10 +194,14 @@ public class FriendRequest extends Fragment {
                     @Override
                     public void done(List<ParseObject> requests, ParseException e) {
                         if (e == null) {
-                            Log.d("DELETING", Integer.toString(requests.size())+" requests");
+                            Log.d("DELETING", Integer.toString(requests.size()) + " requests");
                             for (ParseObject request : requests) {
-
-                                request.deleteInBackground();
+                                Log.d("HERE", "Delete");
+                                try {
+                                    request.delete();
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
                         }
 

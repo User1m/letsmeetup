@@ -89,7 +89,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/refresh_button"
             android:fontFamily="sans-serif-short"
-            android:id="@+id/refresh_button"
+            android:id="@+id/friends_refresh_button"
             android:textSize="15sp"
             android:layout_marginBottom="5dp"
             android:padding="10dp"

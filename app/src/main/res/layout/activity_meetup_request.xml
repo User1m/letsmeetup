@@ -52,7 +52,7 @@
             android:drawSelectorOnTop="false"></ListView>
 
         <Button
-            android:id="@+id/refresh_button"
+            android:id="@+id/meetup_refresh_button"
             style="@style/main_button"
             android:layout_width="140dp"
             android:layout_height="40dp"

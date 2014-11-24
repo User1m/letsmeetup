@@ -13,11 +13,11 @@ import com.parse.ParseUser;
 public class Friends extends ParseObject{
 
     public void setUser(ParseUser user){
-        put("userObjectId", user);
+        put("user_from", user);
     }
 
     public void setFriend(ParseUser friend){
-        put("friendObjectId", friend);
+        put("user_to", friend);
     }
 
     public void setAccepted(){
@@ -29,11 +29,11 @@ public class Friends extends ParseObject{
     }
 
     public ParseUser getUser(){
-        return getParseUser("userObjectId");
+        return getParseUser("user_to");
     }
 
     public ParseUser getFriend(){
-        return  getParseUser("friendObjectId");
+        return  getParseUser("user_from");
     }
 
     public static ParseQuery<Friends> getQuery(){

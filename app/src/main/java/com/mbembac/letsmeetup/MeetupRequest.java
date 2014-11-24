@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mbembac.letsmeetup.Classes.Meetups;
 import com.parse.FindCallback;
@@ -31,7 +32,7 @@ public class MeetupRequest extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_meetup_request, container, false);
 
-        refresh = (Button) v.findViewById(R.id.refresh_button);
+        refresh = (Button) v.findViewById(R.id.meetup_refresh_button);
         final ListView getlist = (ListView) v.findViewById(R.id.meetup_requests);
 
         getlist.setBackgroundColor(Color.argb(12, 24, 34, 23));
@@ -50,19 +51,24 @@ public class MeetupRequest extends Fragment {
                     @Override
                     public void done(List<Meetups> meets, ParseException e) {
                         if (e == null) {
-//                            Log.d("HERE", Integer.toString(meets.size()));
-                            for (Meetups meet : meets) {
-                                String message = meet.getMessage();
-                                if (!list.contains(message)) {
-                                    list.add(message);
+                            if (meets.size() == 0) {
+                                Toast.makeText(getActivity(), "Sorry No Friend Requests Yet", Toast.LENGTH_LONG).show();
+                            } else {
+                                for (Meetups meet : meets) {
+                                    String message = meet.getMessage();
+                                    if (!list.contains(message)) {
+                                        list.add(message);
+                                    }
                                 }
                             }
-                            ArrayAdapter<String> arrayAdapter =
-                                    new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, list);
-                            getlist.setAdapter(arrayAdapter);
                         }
+
+                        ArrayAdapter<String> arrayAdapter =
+                                new ArrayAdapter<String>(getActivity(), R.layout.custom_layout, list);
+                        getlist.setAdapter(arrayAdapter);
                     }
                 });
+
             }
         });
 

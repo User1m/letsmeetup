@@ -254,7 +254,7 @@ public class Welcome extends FragmentActivity implements
 
         if (myLoc == null) {
             Toast.makeText(Welcome.this,
-                    "Please try again after location is determined.", Toast.LENGTH_LONG).show();
+                    "Please wait until GPS is connected.", Toast.LENGTH_LONG).show();
             return;
         }
     }
@@ -282,7 +282,7 @@ public class Welcome extends FragmentActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Connected!", Toast.LENGTH_SHORT).show();
 
         currentLocation = getLocation();
         startPeriodicUpdates();

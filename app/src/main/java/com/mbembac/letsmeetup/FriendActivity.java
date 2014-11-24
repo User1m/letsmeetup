@@ -136,10 +136,10 @@ public class FriendActivity extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 Log.d("Friendship", " SAVED");
-                                if (e == null){
-                                 showSimplePopUp();
-                                }
-                                else {
+                                if (e == null) {
+//                                    showSimplePopUp();
+                                    Toast.makeText(getActivity(), "Request Sent", Toast.LENGTH_SHORT).show();
+                                } else {
                                     if (finduser.equals("")) {
                                         Toast.makeText(getActivity(),
                                                 "Enter a username to search before adding a friend.",

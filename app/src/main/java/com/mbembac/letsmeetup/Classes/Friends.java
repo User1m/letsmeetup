@@ -4,47 +4,32 @@ import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 /**
- * Data model for friend association
+ * Created by ClaudiusThaBeast on 11/28/14.
  */
-
 @ParseClassName("Friends")
-public class Friends extends ParseObject{
+public class Friends extends ParseObject {
 
-    public void setUser(ParseUser user){
-        put("user_from", user);
+    public void addUser(ParseUser user){
+        put("user", user);
     }
 
-    public void setFriend(ParseUser friend){
-        put("user_to", friend);
-    }
-
-    public void setAccepted(){
-        put("accepted", false);
-    }
-
-    public boolean getAccepted(){
-        return getBoolean("accepted");
+    public void addFriend(ParseUser friend){
+        getFriends().add(friend);
     }
 
     public ParseUser getUser(){
-        return getParseUser("user_to");
+        return (ParseUser) get("user");
     }
 
-    public ParseUser getFriend(){
-        return  getParseUser("user_from");
+    public ParseRelation<ParseUser> getFriends(){
+        return getRelation("Friends");
     }
 
     public static ParseQuery<Friends> getQuery(){
         return ParseQuery.getQuery(Friends.class);
-    }
-
-    public void setACL(){
-        ParseACL access = new ParseACL();
-        access.setPublicReadAccess(true);
-        access.setPublicWriteAccess(true);
-        ParseACL.setDefaultACL(access, true);
     }
 }

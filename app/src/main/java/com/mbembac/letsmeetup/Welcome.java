@@ -25,6 +25,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+import com.mbembac.letsmeetup.Classes.Friends;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -43,7 +44,6 @@ public class Welcome extends FragmentActivity implements
 
     // Declare Variable
     static Button logout;
-    //Button friendme;
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -101,6 +101,8 @@ public class Welcome extends FragmentActivity implements
 
     static Location myLoc;
 
+    public static Friends myFriends;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,9 +139,8 @@ public class Welcome extends FragmentActivity implements
                 (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         if (!man.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "Please Enable GPS!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please Enable GPS!", Toast.LENGTH_SHORT).show();
         }
-
 
         Typeface customFont = Typeface.createFromAsset(getResources().getAssets(), "BLACKJAR.ttf");
 
@@ -165,61 +166,90 @@ public class Welcome extends FragmentActivity implements
         txtuser.isOpaque();
         txtuser.setText("Welcome " + username + "!");
 
-        final ParseRelation<ParseUser> friend_relation = ParseUser.getCurrentUser().getRelation("friends");
-        final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
-        final ArrayList<String> list = new ArrayList<String>();
-        final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
 
-        ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
-
-        ParseQuery<ParseUser> query = friend_relation.getQuery();
-        query.whereEqualTo("isOnline", true);
-        query.whereNear("location", mylocation);
-        Log.d(ParseApplication.APPTAG, " Querying my location");
-//        query.setLimit(10);
-
-        query.findInBackground(new FindCallback<ParseUser>() {
-                                   @Override
-                                   public void done(List<ParseUser> parseUsers, ParseException e) {
-                                       if (e == null) {
-
-                                           for (ParseUser user : parseUsers) {
-                                               list.add(user.getUsername());
-                                               user_list.add(user);
-                                           }
-                                       }
-                                       ArrayAdapter<String> arrayAdapter =
-                                               new ArrayAdapter<String>(Welcome.this, R.layout.custom_layout, list);
-                                       getUsers.setAdapter(arrayAdapter);
-                                   }
-                               }
-        );
-
-
-        getUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ParseQuery<Friends> query_friends = Friends.getQuery();
+        query_friends.whereEqualTo("user", ParseUser.getCurrentUser());
+        query_friends.findInBackground(new FindCallback<Friends>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                view.setSelected(true);
-                final Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
-                String user_name = parent.getItemAtPosition(position).toString();
-
-                for (ParseUser user : user_list) {
-                    if (user_name == user.get("username")) {
-
-                        double lon = user.getParseGeoPoint("location").getLongitude();
-                        double lat = user.getParseGeoPoint("location").getLatitude();
-
-                        intent.putExtra("username", user.getUsername());
-                        intent.putExtra("lat", lat);
-                        intent.putExtra("lon", lon);
-
-                        Log.d("SENT", "Sending user over");
+            public void done(List<Friends> friend, ParseException e) {
+                if (e == null) {
+                    if (friend.isEmpty()) {
+                        Friends addMe = new Friends();
+                        addMe.addUser(ParseUser.getCurrentUser());
+                        addMe.saveInBackground();
+                        Toast.makeText(Welcome.this, "No Friends Yet! Click Friend Options and add friends.", Toast.LENGTH_LONG).show();
+                        myFriends = null;
+                    } else if (friend.size() == 1) {
+                        myFriends = friend.get(0);
                     }
                 }
-                startActivity(intent);
             }
         });
+
+
+        if (myFriends != null) {
+
+            Log.d("MYFRIENDS", "NOT NULL");
+
+            final ParseRelation<ParseUser> friend_relation = myFriends.getFriends();
+            final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
+            final ArrayList<String> list = new ArrayList<String>();
+            final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
+
+            ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
+
+            ParseQuery<ParseUser> query = friend_relation.getQuery();
+            query.whereEqualTo("isOnline", true);
+            query.whereNear("location", mylocation);
+            Log.d(ParseApplication.APPTAG, " Querying my location");
+//        query.setLimit(10);
+
+            query.findInBackground(new FindCallback<ParseUser>() {
+                                       @Override
+                                       public void done(List<ParseUser> parseUsers, ParseException e) {
+                                           if (e == null) {
+
+                                               for (ParseUser user : parseUsers) {
+                                                   list.add(user.getUsername());
+                                                   user_list.add(user);
+                                               }
+                                           }
+                                           ArrayAdapter<String> arrayAdapter =
+                                                   new ArrayAdapter<String>(Welcome.this, R.layout.custom_layout, list);
+                                           getUsers.setAdapter(arrayAdapter);
+                                       }
+                                   }
+            );
+
+
+            getUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    view.setSelected(true);
+                    final Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
+                    String user_name = parent.getItemAtPosition(position).toString();
+
+                    for (ParseUser user : user_list) {
+                        if (user_name == user.get("username")) {
+
+                            double lon = user.getParseGeoPoint("location").getLongitude();
+                            double lat = user.getParseGeoPoint("location").getLatitude();
+
+                            intent.putExtra("username", user.getUsername());
+                            intent.putExtra("lat", lat);
+                            intent.putExtra("lon", lon);
+
+                            Log.d("SENT", "Sending user over");
+                        }
+                    }
+                    startActivity(intent);
+                }
+            });
+
+        }else{
+            Log.d("MYFRIENDS", "IS NULL");
+        }
 
         //register notifications
 //        ParsePush.subscribeInBackground("", new SaveCallback() {

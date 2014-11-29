@@ -8,6 +8,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.mbembac.letsmeetup.Classes.FriendRequests;
 import com.mbembac.letsmeetup.Classes.Friends;
 import com.mbembac.letsmeetup.Classes.Meetups;
 import com.mbembac.letsmeetup.Classes.Users;
@@ -37,6 +38,7 @@ public class ParseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        ParseObject.registerSubclass(FriendRequests.class);
         ParseObject.registerSubclass(Friends.class);
         ParseObject.registerSubclass(Users.class);
         ParseObject.registerSubclass(Meetups.class);
@@ -50,20 +52,17 @@ public class ParseApplication extends Application {
 
         ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
-
-        // If you would like all objects to be private by default, remove this
-        // line.
+        // If you would like all objects to be private by default, remove this line.
         defaultACL.setPublicReadAccess(true);
-//        defaultACL.setPublicWriteAccess(true);
-
+        defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
     }
 
-    public static float getSearchDistance() {
-        return preferences.getFloat(SEARCH_DISTANCE, DEFAULT_SEARCH_DISTANCE);
-    }
-
-    public static void setSearchDistance(float value) {
-        preferences.edit().putFloat(SEARCH_DISTANCE, value).commit();
-    }
+//    public static float getSearchDistance() {
+//        return preferences.getFloat(SEARCH_DISTANCE, DEFAULT_SEARCH_DISTANCE);
+//    }
+//
+//    public static void setSearchDistance(float value) {
+//        preferences.edit().putFloat(SEARCH_DISTANCE, value).commit();
+//    }
 }

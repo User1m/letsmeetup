@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mbembac.letsmeetup.Classes.Friends;
+import com.mbembac.letsmeetup.Classes.FriendRequests;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -127,11 +127,10 @@ public class FriendActivity extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                Friends newFriendship = new Friends();
+                FriendRequests newFriendship = new FriendRequests();
                 newFriendship.setUser(ParseUser.getCurrentUser());
                 newFriendship.setFriend(clickedUser);
                 newFriendship.setAccepted();
-                newFriendship.setACL();
                 newFriendship.saveInBackground(
                         new SaveCallback() {
                             @Override

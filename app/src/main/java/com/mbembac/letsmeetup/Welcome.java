@@ -103,6 +103,9 @@ public class Welcome extends FragmentActivity implements
 
     public static Friends myFriends;
 
+    public final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
+    public final ArrayList<String> list = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,10 +123,6 @@ public class Welcome extends FragmentActivity implements
         locationClient = new LocationClient(this, this, this);
 
         myLoc = (currentLocation == null) ? lastLocation : currentLocation;
-
-        final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
-        final ArrayList<String> list = new ArrayList<String>();
-        final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
 
         Button friend_opt = (Button) findViewById(R.id.friend_option_button);
         friend_opt.setOnClickListener(new View.OnClickListener() {
@@ -193,62 +192,7 @@ public class Welcome extends FragmentActivity implements
 
         if (myFriends != null) {
 
-            Log.d("MYFRIENDS", "NOT NULL");
-
-            list.clear();
-
-            final ParseRelation<ParseUser> friend_relation = myFriends.getFriends();
-
-            ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
-
-            ParseQuery<ParseUser> query = friend_relation.getQuery();
-            query.whereEqualTo("isOnline", true);
-            query.whereNear("location", mylocation);
-            Log.d(ParseApplication.APPTAG, " Querying my location");
-//        query.setLimit(10);
-
-            query.findInBackground(new FindCallback<ParseUser>() {
-                                       @Override
-                                       public void done(List<ParseUser> parseUsers, ParseException e) {
-                                           if (e == null) {
-
-                                               for (ParseUser user : parseUsers) {
-                                                   list.add(user.getUsername());
-                                                   user_list.add(user);
-                                               }
-                                           }
-                                           ArrayAdapter<String> arrayAdapter =
-                                                   new ArrayAdapter<String>(Welcome.this, R.layout.custom_layout, list);
-                                           getUsers.setAdapter(arrayAdapter);
-                                       }
-                                   }
-            );
-
-
-            getUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    view.setSelected(true);
-                    final Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
-                    String user_name = parent.getItemAtPosition(position).toString();
-
-                    for (ParseUser user : user_list) {
-                        if (user_name == user.get("username")) {
-
-                            double lon = user.getParseGeoPoint("location").getLongitude();
-                            double lat = user.getParseGeoPoint("location").getLatitude();
-
-                            intent.putExtra("username", user.getUsername());
-                            intent.putExtra("lat", lat);
-                            intent.putExtra("lon", lon);
-
-                            Log.d("SENT", "Sending user over");
-                        }
-                    }
-                    startActivity(intent);
-                }
-            });
+            checkForFriends(user_list, list, myFriends);
 
         }else{
             Log.d("MYFRIENDS", "IS NULL");
@@ -277,6 +221,10 @@ public class Welcome extends FragmentActivity implements
                                                   currentUser.saveInBackground();
                                                   // Logout current user
                                                   currentUser.logOut();
+
+                                                  //clear lists
+                                                  user_list.clear();
+                                                  list.clear();
 //                                                  Welcome.this.finish();
                                                   Intent intent = new Intent(Welcome.this, LoginSignupActivity.class);
                                                   startActivity(intent);
@@ -290,6 +238,69 @@ public class Welcome extends FragmentActivity implements
                     "Please wait until GPS is connected.", Toast.LENGTH_LONG).show();
             return;
         }
+    }
+
+    private void checkForFriends(final ArrayList<ParseUser> user_list, final ArrayList<String> list, Friends myFriends) {
+        Log.d("MYFRIENDS", "NOT NULL");
+
+        user_list.clear();
+        list.clear();
+
+        final ParseRelation<ParseUser> friend_relation = myFriends.getFriends();
+        final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
+
+        ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
+
+        ParseQuery<ParseUser> query = friend_relation.getQuery();
+        query.whereEqualTo("isOnline", true);
+        query.whereNear("location", mylocation);
+        Log.d(ParseApplication.APPTAG, " Querying my location");
+//        query.setLimit(10);
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+                                   @Override
+                                   public void done(List<ParseUser> parseUsers, ParseException e) {
+                                       if (e == null) {
+
+                                           for (ParseUser user : parseUsers) {
+                                               Log.d("MY FRIEND", user.getUsername());
+
+                                               list.add(user.getUsername());
+                                               user_list.add(user);
+                                           }
+                                       }
+                                       ArrayAdapter<String> arrayAdapter =
+                                               new ArrayAdapter<String>(Welcome.this, R.layout.custom_layout, list);
+                                       getUsers.setAdapter(arrayAdapter);
+                                   }
+                               }
+        );
+
+
+        getUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                view.setSelected(true);
+                final Intent intent = new Intent(Welcome.this, FriendMapActivty.class);
+                String user_name = parent.getItemAtPosition(position).toString();
+
+                for (ParseUser user : user_list) {
+                    if (user_name == user.get("username")) {
+
+                        double lon = user.getParseGeoPoint("location").getLongitude();
+                        double lat = user.getParseGeoPoint("location").getLatitude();
+
+                        intent.putExtra("username", user.getUsername());
+                        intent.putExtra("lat", lat);
+                        intent.putExtra("lon", lon);
+
+                        Log.d("SENT", "Sending user over");
+                    }
+                }
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -311,6 +322,14 @@ public class Welcome extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (myFriends != null) {
+
+            checkForFriends(user_list, list, myFriends);
+
+        }else{
+            Log.d("MYFRIENDS", "IS NULL");
+        }
     }
 
     @Override
@@ -390,6 +409,19 @@ public class Welcome extends FragmentActivity implements
                     Log.d(ParseApplication.APPTAG, "Unknown request code received for the activity");
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (myFriends != null) {
+
+            checkForFriends(user_list, list, myFriends);
+
+        }else{
+            Log.d("MYFRIENDS", "IS NULL");
         }
     }
 

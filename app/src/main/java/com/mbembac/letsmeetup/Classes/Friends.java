@@ -1,6 +1,5 @@
 package com.mbembac.letsmeetup.Classes;
 
-import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -26,7 +25,7 @@ public class Friends extends ParseObject {
     }
 
     public ParseRelation<ParseUser> getFriends(){
-        return getRelation("Friends");
+        return getRelation("user_friends");
     }
 
     public static ParseQuery<Friends> getQuery(){

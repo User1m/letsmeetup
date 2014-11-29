@@ -6,6 +6,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#B7FFF0"
     tools:context="com.mbembac.letsmeetup.FriendMapActivty">
 
 
@@ -20,6 +21,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#393939"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="bold"
+            android:textAllCaps="true"
             android:text="@string/friend_map_name_of_friend"
             android:id="@+id/friend_map_name"
             android:textSize="25sp"
@@ -30,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#393939"
             android:text="@string/friend_map_miles"
             android:id="@+id/friend_map_miles"
             android:textSize="20sp"
@@ -61,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#393939"
                 android:text="@string/when_invite"
                 android:id="@+id/when_invite" />
 
@@ -68,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:textColor="#393939"
                 android:ems="10"
                 android:id="@+id/when" />
 
@@ -84,6 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#393939"
                 android:text="@string/where_invite"
                 android:id="@+id/where_invite" />
 
@@ -91,6 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:textColor="#393939"
                 android:id="@+id/where"
                 android:ems="10"/>
 
@@ -107,8 +117,6 @@
                 android:text="@string/send_request_meetup"
                 android:id="@+id/send_request_meetup"
                 android:padding="10dp"/>
-
         </LinearLayout>
-
     </LinearLayout>
 </RelativeLayout>

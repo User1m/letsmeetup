@@ -28,7 +28,7 @@
     <string name="when_invite">When </string>
     <string name="where_invite">Where</string>
     <string name="friend_map_name_of_friend">Name Of Friend</string>
-    <string name="friend_map_miles">123 Miles Away</string>
+    <string name="friend_map_miles">Within 100 Miles</string>
     <string name="send_request_meetup">Send Meetup Request</string>
     <string name="title_activity_login_activty">LoginActivty</string>
     <string name="lost_password_button">Lost Password</string>

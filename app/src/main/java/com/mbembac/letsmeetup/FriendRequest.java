@@ -59,6 +59,9 @@ public class FriendRequest extends Fragment {
                 Log.d("HERE", "Getting requests");
                 //Assume getting ready to fetch new requests
 
+                user_list.clear();
+                user_list_names.clear();
+
                 final ParseQuery<FriendRequests> query = FriendRequests.getQuery();
                 query.whereEqualTo("user_to", ParseUser.getCurrentUser());
                 query.whereEqualTo("accepted", false);

@@ -121,6 +121,10 @@ public class Welcome extends FragmentActivity implements
 
         myLoc = (currentLocation == null) ? lastLocation : currentLocation;
 
+        final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
+        final ArrayList<String> list = new ArrayList<String>();
+        final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
+
         Button friend_opt = (Button) findViewById(R.id.friend_option_button);
         friend_opt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,10 +195,9 @@ public class Welcome extends FragmentActivity implements
 
             Log.d("MYFRIENDS", "NOT NULL");
 
+            list.clear();
+
             final ParseRelation<ParseUser> friend_relation = myFriends.getFriends();
-            final ArrayList<ParseUser> user_list = new ArrayList<ParseUser>();
-            final ArrayList<String> list = new ArrayList<String>();
-            final ListView getUsers = (ListView) findViewById(R.id.friendslistView);
 
             ParseGeoPoint mylocation = (ParseGeoPoint) ParseUser.getCurrentUser().get("location");
 

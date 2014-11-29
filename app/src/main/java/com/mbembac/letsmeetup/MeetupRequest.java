@@ -44,6 +44,8 @@ public class MeetupRequest extends Fragment {
             @Override
             public void onClick(View v) {
 
+                list.clear();
+
                 final ParseQuery<Meetups> query = Meetups.getQuery();
                 query.whereEqualTo("user_to", ParseUser.getCurrentUser());
                 query.findInBackground(new FindCallback<Meetups>() {
@@ -52,7 +54,7 @@ public class MeetupRequest extends Fragment {
                     public void done(List<Meetups> meets, ParseException e) {
                         if (e == null) {
                             if (meets.size() == 0) {
-                                Toast.makeText(getActivity(), "Sorry No Friend Requests Yet", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Sorry No Meetup Requests Yet", Toast.LENGTH_LONG).show();
                             } else {
                                 for (Meetups meet : meets) {
                                     String message = meet.getMessage();

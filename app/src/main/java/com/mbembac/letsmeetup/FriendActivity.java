@@ -31,11 +31,10 @@ public class FriendActivity extends Fragment {
 
     Button addfriend;
     Button findfriend;
-    // Button goback;
 
     String finduser;
     EditText findusertxt;
-    ParseUser clickedUser;
+    ParseUser clickedUser = ParseUser.getCurrentUser();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,15 +54,13 @@ public class FriendActivity extends Fragment {
         getlist.setCacheColorHint(Color.DKGRAY);
 
 
-        // Add Friend Button Click Listener
+        // Find Friend Button Click Listener
         findfriend.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
 
                 finduser = findusertxt.getText().toString();
-
                 ParseQuery<ParseUser> query = ParseUser.getQuery();
-
                 query.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> objects, ParseException e) {
@@ -115,7 +112,6 @@ public class FriendActivity extends Fragment {
                                 clickedUser = parseUsers.get(0);
                                 Log.d("HERE", clickedUser.getUsername());
                             }
-
                         }
                     }
                 });
@@ -127,29 +123,40 @@ public class FriendActivity extends Fragment {
 
             @Override
             public void onClick(View arg0) {
-                FriendRequests newFriendship = new FriendRequests();
-                newFriendship.setUser(ParseUser.getCurrentUser());
-                newFriendship.setFriend(clickedUser);
-                newFriendship.setAccepted();
-                newFriendship.saveInBackground(
-                        new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                Log.d("Friendship", " SAVED");
-                                if (e == null) {
+                String check = ParseUser.getCurrentUser().getUsername().toString();
+                String check2 = clickedUser.getUsername().toString();
+
+                if (!check.equals(check2)) {
+
+                    FriendRequests newFriendship = new FriendRequests();
+                    newFriendship.setUser(ParseUser.getCurrentUser());
+                    newFriendship.setFriend(clickedUser);
+                    newFriendship.setAccepted();
+                    newFriendship.saveInBackground(
+                            new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.d("Friendship", " SAVED");
+                                    if (e == null) {
 //                                    showSimplePopUp();
-                                    Toast.makeText(getActivity(), "Request Sent", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    if (finduser.equals("")) {
-                                        Toast.makeText(getActivity(),
-                                                "Enter a username to search before adding a friend.",
-                                                Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Request Sent", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        if (finduser.equals("")) {
+                                            Toast.makeText(getActivity(),
+                                                    "Enter a username to search before adding a friend.",
+                                                    Toast.LENGTH_LONG).show();
+                                        }
                                     }
                                 }
                             }
-                        }
-                );
+                    );
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Search for a friend first!",
+                            Toast.LENGTH_LONG).show();
+                }
             }
+
         });
 
         return v;

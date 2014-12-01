@@ -1,5 +1,8 @@
 package com.mbembac.letsmeetup;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.TextView;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -7,6 +10,7 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
 public class FragmentMainPage extends FragmentActivity {
     ViewPager Tab;
@@ -61,5 +65,15 @@ public class FragmentMainPage extends FragmentActivity {
         actionBar.addTab(actionBar.newTab().setText("Add Friends").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("Friend Requests").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("View Meetups").setTabListener(tabListener));
+
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No Network Connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

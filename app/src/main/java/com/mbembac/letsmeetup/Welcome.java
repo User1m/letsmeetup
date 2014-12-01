@@ -120,9 +120,9 @@ public class Welcome extends FragmentActivity implements
         if (networkInfo != null && networkInfo.isConnected()) {
             Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Network Connection.", Toast.LENGTH_SHORT).show();
         }
-        
+
         //create global location object
         locationRequest = LocationRequest.create();
         //set update interval
@@ -360,7 +360,7 @@ public class Welcome extends FragmentActivity implements
         if (networkInfo != null && networkInfo.isConnected()) {
             Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Network Connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

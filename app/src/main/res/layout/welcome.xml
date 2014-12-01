@@ -66,13 +66,6 @@
         android:layout_centerHorizontal="true"
         android:text="Friend Options" />
 
-    <!--<Button-->
-        <!--android:id="@+id/friendme_button"-->
-        <!--style="@style/button_text"-->
-        <!--android:layout_below="@+id/tableLayout4"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:text="@string/findfriend" />-->
-
     <Button
         android:id="@+id/logout"
         style="@style/button_text"

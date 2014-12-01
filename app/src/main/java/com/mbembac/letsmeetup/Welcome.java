@@ -36,6 +36,9 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 public class Welcome extends FragmentActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener,
@@ -111,6 +114,15 @@ public class Welcome extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
+            }
+
         //create global location object
         locationRequest = LocationRequest.create();
         //set update interval
@@ -180,7 +192,7 @@ public class Welcome extends FragmentActivity implements
                         Friends addMe = new Friends();
                         addMe.addUser(ParseUser.getCurrentUser());
                         addMe.saveInBackground();
-                        Toast.makeText(Welcome.this, "No Friends Yet! Click Friend Options and add friends.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Welcome.this, "No Friends Yet! Click Friend Options and Add Your Friends.", Toast.LENGTH_LONG).show();
                         myFriends = null;
                     } else if (friend.size() == 1) {
                         myFriends = friend.get(0);
@@ -194,7 +206,7 @@ public class Welcome extends FragmentActivity implements
 
             checkForFriends(user_list, list, myFriends);
 
-        }else{
+        } else {
             Log.d("MYFRIENDS", "IS NULL");
         }
 
@@ -209,6 +221,9 @@ public class Welcome extends FragmentActivity implements
 //                }
 //            }
 //        });
+
+
+
 
 
         // Logout Button Click Listener
@@ -327,7 +342,7 @@ public class Welcome extends FragmentActivity implements
 
             checkForFriends(user_list, list, myFriends);
 
-        }else{
+        } else {
             Log.d("MYFRIENDS", "IS NULL");
         }
     }
@@ -420,7 +435,7 @@ public class Welcome extends FragmentActivity implements
 
             checkForFriends(user_list, list, myFriends);
 
-        }else{
+        } else {
             Log.d("MYFRIENDS", "IS NULL");
         }
     }

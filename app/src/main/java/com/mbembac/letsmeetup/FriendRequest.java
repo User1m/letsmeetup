@@ -33,7 +33,7 @@ public class FriendRequest extends Fragment {
     Button acceptFriend;
     Button rejectFriend;
     Button refresh;
-    public ParseUser clickedUser;
+    public ParseUser clickedUser = ParseUser.getCurrentUser();
     public boolean clickedUserSelected = false;
     protected String friend_name;
     static ParseUser currentFriend;
@@ -118,78 +118,85 @@ public class FriendRequest extends Fragment {
             @Override
             public void onClick(View arg0) {
 
-                ParseQuery<Friends> query_me = Friends.getQuery();
-                query_me.whereEqualTo("user", ParseUser.getCurrentUser());
-                query_me.findInBackground(new FindCallback<Friends>() {
-                    @Override
-                    public void done(List<Friends> friends, ParseException e) {
-                        if (e == null) {
-                            if (friends.size() == 1) {
-                                friends.get(0).addFriend(clickedUser);
-                                friends.get(0).saveInBackground();
+                String check = ParseUser.getCurrentUser().getUsername().toString();
+                String check2 = clickedUser.getUsername().toString();
 
-                            } else if (friends.isEmpty()) {
+                if (!check.equals(check2)) {
+                    ParseQuery<Friends> query_me = Friends.getQuery();
+                    query_me.whereEqualTo("user", ParseUser.getCurrentUser());
+                    query_me.findInBackground(new FindCallback<Friends>() {
+                        @Override
+                        public void done(List<Friends> friends, ParseException e) {
+                            if (e == null) {
+                                if (friends.size() == 1) {
+                                    friends.get(0).addFriend(clickedUser);
+                                    friends.get(0).saveInBackground();
 
-                                Friends newFriends = new Friends();
-                                newFriends.addUser(ParseUser.getCurrentUser());
-                                newFriends.addFriend(clickedUser);
-                                newFriends.saveInBackground();
+                                } else if (friends.isEmpty()) {
+
+                                    Friends newFriends = new Friends();
+                                    newFriends.addUser(ParseUser.getCurrentUser());
+                                    newFriends.addFriend(clickedUser);
+                                    newFriends.saveInBackground();
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
-                ParseQuery<Friends> query_friend = Friends.getQuery();
-                query_friend.whereEqualTo("user", clickedUser);
-                query_friend.findInBackground(new FindCallback<Friends>() {
-                    @Override
-                    public void done(List<Friends> friends, ParseException e) {
-                        if (e == null) {
-                            if (friends.size() == 1) {
-                                friends.get(0).addFriend(ParseUser.getCurrentUser());
-                                friends.get(0).saveInBackground();
+                    ParseQuery<Friends> query_friend = Friends.getQuery();
+                    query_friend.whereEqualTo("user", clickedUser);
+                    query_friend.findInBackground(new FindCallback<Friends>() {
+                        @Override
+                        public void done(List<Friends> friends, ParseException e) {
+                            if (e == null) {
+                                if (friends.size() == 1) {
+                                    friends.get(0).addFriend(ParseUser.getCurrentUser());
+                                    friends.get(0).saveInBackground();
 
-                            } else if (friends.isEmpty()) {
-                                Friends newFriends = new Friends();
-                                newFriends.addUser(clickedUser);
-                                newFriends.addFriend(ParseUser.getCurrentUser());
-                                newFriends.saveInBackground();
+                                } else if (friends.isEmpty()) {
+                                    Friends newFriends = new Friends();
+                                    newFriends.addUser(clickedUser);
+                                    newFriends.addFriend(ParseUser.getCurrentUser());
+                                    newFriends.saveInBackground();
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
-                ParseQuery<ParseObject> query_requests = ParseQuery.getQuery("FriendRequests");
-                query_requests.whereEqualTo("user_from", clickedUser);
-                query_requests.whereEqualTo("user_to", ParseUser.getCurrentUser());
-                query_requests.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> requests, ParseException e) {
-                        if (e == null) {
-                            Log.d("ACCEPTING", Integer.toString(requests.size()) + " requests");
-                            for (ParseObject request : requests) {
-                                request.deleteInBackground(new DeleteCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            int c = 0;
-                                            for (String name : user_list_names) {
-                                                if (name.equals(friend_name)) {
-                                                    user_list_names.remove(c);
-                                                    break;
+                    ParseQuery<ParseObject> query_requests = ParseQuery.getQuery("FriendRequests");
+                    query_requests.whereEqualTo("user_from", clickedUser);
+                    query_requests.whereEqualTo("user_to", ParseUser.getCurrentUser());
+                    query_requests.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> requests, ParseException e) {
+                            if (e == null) {
+                                Log.d("ACCEPTING", Integer.toString(requests.size()) + " requests");
+                                for (ParseObject request : requests) {
+                                    request.deleteInBackground(new DeleteCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                int c = 0;
+                                                for (String name : user_list_names) {
+                                                    if (name.equals(friend_name)) {
+                                                        user_list_names.remove(c);
+                                                        break;
+                                                    }
+                                                    c++;
                                                 }
-                                                c++;
+                                                Toast.makeText(getActivity(), friend_name + " has been added!", Toast.LENGTH_LONG).show();
+                                            } else {
+                                                e.printStackTrace();
                                             }
-                                            Toast.makeText(getActivity(), friend_name + " has been added!", Toast.LENGTH_LONG).show();
-                                        } else {
-                                            e.printStackTrace();
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "No user is selected to Accept!", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

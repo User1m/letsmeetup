@@ -2,7 +2,8 @@
 /.idea/workspace.xml
 .DS_Store
 /.idea/*
-*.gradle
+#*.gradle
+.gradle/*
 *.iml
 build/*
 gradle/*

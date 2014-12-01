@@ -114,15 +114,15 @@ public class Welcome extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
-            }
-
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
+        }
+        
         //create global location object
         locationRequest = LocationRequest.create();
         //set update interval
@@ -353,6 +353,15 @@ public class Welcome extends FragmentActivity implements
 
         currentLocation = getLocation();
         startPeriodicUpdates();
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            Toast.makeText(this, "Network is Connected.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No Connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

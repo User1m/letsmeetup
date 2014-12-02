@@ -11,6 +11,7 @@ import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
+import com.parse.ParseACL;
 
 public class FragmentMainPage extends FragmentActivity {
     ViewPager Tab;
@@ -66,6 +67,11 @@ public class FragmentMainPage extends FragmentActivity {
         actionBar.addTab(actionBar.newTab().setText("Friend Requests").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("View Meetups").setTabListener(tabListener));
 
+
+        ParseACL myAppACL = new ParseACL();
+        myAppACL.setPublicReadAccess(true);
+        myAppACL.setPublicWriteAccess(true);
+        ParseACL.setDefaultACL(myAppACL, true);
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);

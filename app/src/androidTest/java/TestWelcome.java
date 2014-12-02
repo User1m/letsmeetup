@@ -2,7 +2,6 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.mbembac.letsmeetup.MainActivity;
 import com.mbembac.letsmeetup.Welcome;
-import com.parse.ParseUser;
 import com.robotium.solo.Solo;
 
 
@@ -26,7 +25,6 @@ public class TestWelcome extends ActivityInstrumentationTestCase2<Welcome> {
         solo.finishOpenedActivities();
         super.tearDown();
     }
-
 
 
     public void testLoggingIn() {

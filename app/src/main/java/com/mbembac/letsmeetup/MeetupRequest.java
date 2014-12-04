@@ -61,7 +61,7 @@ public class MeetupRequest extends Fragment {
                     public void done(List<Meetups> meets, ParseException e) {
                         if (e == null) {
                             if (meets.size() == 0) {
-                                Toast.makeText(getActivity(), "Sorry No Meetup Requests Yet", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Sorry No Meetup Requests Yet", Toast.LENGTH_SHORT).show();
                             } else {
                                 for (Meetups meet : meets) {
                                     String message = meet.getMessage();
@@ -129,7 +129,7 @@ public class MeetupRequest extends Fragment {
                                                                                    }
                                                                                    c++;
                                                                                }
-                                                                               Toast.makeText(getActivity(), "Meetup has been removed. Please Refresh.", Toast.LENGTH_LONG).show();
+                                                                               Toast.makeText(getActivity(), "Meetup has been removed. Please Refresh.", Toast.LENGTH_SHORT).show();
                                                                            } else {
                                                                                e.printStackTrace();
                                                                            }

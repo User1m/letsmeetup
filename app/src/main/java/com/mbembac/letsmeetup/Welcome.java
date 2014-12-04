@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -35,10 +37,6 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 public class Welcome extends FragmentActivity implements
         GooglePlayServicesClient.OnConnectionFailedListener,
@@ -192,7 +190,7 @@ public class Welcome extends FragmentActivity implements
                         Friends addMe = new Friends();
                         addMe.addUser(ParseUser.getCurrentUser());
                         addMe.saveInBackground();
-                        Toast.makeText(Welcome.this, "No Friends Yet! Click Friend Options and Add Your Friends.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Welcome.this, "No Friends Yet! Click Friend Options and Add Your Friends.", Toast.LENGTH_SHORT).show();
                         myFriends = null;
                     } else if (friend.size() == 1) {
                         myFriends = friend.get(0);
@@ -276,7 +274,9 @@ public class Welcome extends FragmentActivity implements
                                    @Override
                                    public void done(List<ParseUser> parseUsers, ParseException e) {
                                        if (e == null) {
-
+                                           list.clear();
+                                           user_list.clear();
+                                        Log.d("FOUND # USERS", Integer.toString(parseUsers.size()));
                                            for (ParseUser user : parseUsers) {
                                                Log.d("MY FRIEND", user.getUsername());
 

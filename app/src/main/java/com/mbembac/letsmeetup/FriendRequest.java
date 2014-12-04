@@ -58,10 +58,6 @@ public class FriendRequest extends Fragment {
             public void onClick(View arg0) {
                 Log.d("HERE", "Getting requests");
                 //Assume getting ready to fetch new requests
-
-                user_list.clear();
-                user_list_names.clear();
-
                 final ParseQuery<FriendRequests> query = FriendRequests.getQuery();
                 query.whereEqualTo("user_to", ParseUser.getCurrentUser());
                 query.whereEqualTo("accepted", false);
@@ -70,8 +66,12 @@ public class FriendRequest extends Fragment {
                     @Override
                     public void done(List<FriendRequests> requests, ParseException e) {
                         if (e == null) {
+
+                            user_list.clear();
+                            user_list_names.clear();
+
                             if (requests.isEmpty()) {
-                                Toast.makeText(getActivity(), "Sorry No Friend Requests Yet", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Sorry No Friend Requests Yet", Toast.LENGTH_SHORT).show();
                             } else {
                                 for (FriendRequests request : requests) {
                                     try {
@@ -80,7 +80,9 @@ public class FriendRequest extends Fragment {
                                         e1.printStackTrace();
                                     }
 //                                    Log.d("Friend", currentFriend.getUsername());
-                                    user_list_names.add(currentFriend.getUsername());
+                                    if(!user_list_names.contains(currentFriend.getUsername())){
+                                        user_list_names.add(currentFriend.getUsername());
+                                    }
                                     user_list.add(currentFriend);
                                 }
                             }
@@ -184,7 +186,7 @@ public class FriendRequest extends Fragment {
                                                     }
                                                     c++;
                                                 }
-                                                Toast.makeText(getActivity(), friend_name + " has been added!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getActivity(), friend_name + " has been added!", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 e.printStackTrace();
                                             }
@@ -195,7 +197,7 @@ public class FriendRequest extends Fragment {
                         }
                     });
                 } else {
-                    Toast.makeText(getActivity(), "No user is selected to Accept!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "No user is selected to Accept!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -226,7 +228,7 @@ public class FriendRequest extends Fragment {
                                                 }
                                                 c++;
                                             }
-                                            Toast.makeText(getActivity(), "Request has been removed. Please Refresh.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getActivity(), "Request has been removed. Please Refresh.", Toast.LENGTH_SHORT).show();
                                         } else {
                                             e.printStackTrace();
                                         }

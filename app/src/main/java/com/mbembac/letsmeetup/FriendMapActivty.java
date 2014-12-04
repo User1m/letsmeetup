@@ -71,6 +71,7 @@ public class FriendMapActivty extends Activity {
 
         //assume user means to send meetup
         ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("username",username);
         query.findInBackground(new FindCallback<ParseUser>() {
 
             @Override
@@ -81,6 +82,7 @@ public class FriendMapActivty extends Activity {
                         if (user.getUsername().equals(username)) {
 //                            user_list.clear();
                             user_list.add(parseUsers.get(c));
+                            break;
                         }
                         c++;
                     }

@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,8 +86,8 @@ public class MeetupRequest extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.setSelected(true);
-                String name = parent.getItemAtPosition(position).toString();
-                messageClicked = name;
+                String msg = parent.getItemAtPosition(position).toString();
+                messageClicked = msg;
                 showSimplePopUp();
             }
         });
@@ -107,59 +106,57 @@ public class MeetupRequest extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         //delete message from list
 
-                        ParseQuery<Meetups> query = Meetups.getQuery();
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Meetups");
                         query.whereEqualTo("user_to", ParseUser.getCurrentUser());
-                        query.findInBackground(new FindCallback<Meetups>() {
+                        query.findInBackground(new FindCallback<ParseObject>() {
 
-                            @Override
-                            final public void done(List<Meetups> meets, ParseException e) {
-                                if (e == null) {
+                                                   @Override
+                                                   final public void done(List<ParseObject> meets, ParseException e) {
+                                                       if (e == null) {
+                                                           for (ParseObject meet : meets) {
+                                                               String msg = meet.getString("Message");
 
-                                    for (Meetups meet : meets) {
-                                        String x = meet.getMessage();
-                                        if (x.equals(messageClicked)) {
-                                            meet.deleteInBackground(new DeleteCallback() {
-                                                @Override
-                                                public void done(ParseException e) {
-                                                    if (e == null) {
-                                                        int c = 0;
-                                                        for (String one : list) {
-                                                            if (one.equals(messageClicked)) {
-                                                                list.remove(c);
-                                                            }
-                                                            c++;
-                                                        }
-                                                        Toast.makeText(getActivity(), "Meetup has been removed.", Toast.LENGTH_LONG).show();
-                                                    } else {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            });
-                                        }
+                                                               if (msg.equals(messageClicked)) {
+                                                                   meet.deleteInBackground(new DeleteCallback() {
+                                                                       @Override
+                                                                       public void done(ParseException e) {
+                                                                           if (e == null) {
+                                                                               int c = 0;
+                                                                               for (String found : list) {
+                                                                                   if (found.equals(messageClicked)) {
+                                                                                       list.remove(c);
+                                                                                       break;
+                                                                                   }
+                                                                                   c++;
+                                                                               }
+                                                                               Toast.makeText(getActivity(), "Meetup has been removed. Please Refresh.", Toast.LENGTH_LONG).show();
+                                                                           } else {
+                                                                               e.printStackTrace();
+                                                                           }
+                                                                       }
+                                                                   });
+                                                               }
 
-                                    }
-                                }
-                                }
-                            }
-
-                            );
-                        }
+                                                           }
+                                                       }
+                                                   }
+                                               }
+                        );
                     }
+                }
+        );
+        helpBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener()
 
-                    );
-                    helpBuilder.setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener()
-
-                    {
-                        public void onClick (DialogInterface dialog,int which){
+                {
+                    public void onClick(DialogInterface dialog, int which) {
                         // Close window
                     }
-                    }
-
-                    );
-                    // Remember, create doesn't show the dialog
-                    AlertDialog helpDialog = helpBuilder.create();
-                    helpDialog.show();
                 }
-
+        );
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
     }
+
+}

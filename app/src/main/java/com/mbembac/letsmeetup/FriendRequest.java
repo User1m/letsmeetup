@@ -226,7 +226,7 @@ public class FriendRequest extends Fragment {
                                                 }
                                                 c++;
                                             }
-                                            Toast.makeText(getActivity(), "Request has been removed", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getActivity(), "Request has been removed. Please Refresh.", Toast.LENGTH_LONG).show();
                                         } else {
                                             e.printStackTrace();
                                         }
